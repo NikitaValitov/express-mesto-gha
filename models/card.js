@@ -9,20 +9,20 @@ const cardSchema = new mongoose.Schema({
   },
   link: {
     type: String,
-    required: [true, 'Поле является обязательным']
+    required: [true, 'Поле является обязательным'],
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    required: [true, 'Поле является обязательным']
+    required: [true, 'Поле является обязательным'],
   },
   likes: [{
     type: mongoose.Schema.Types.ObjectId,
-    default: []
+    default: [],
   }],
   createdAt: {
     type: Date,
-    default: Date.now
-  }
-})
+    default: Date.now,
+  },
+});
 
 module.exports = mongoose.model('card', cardSchema);
