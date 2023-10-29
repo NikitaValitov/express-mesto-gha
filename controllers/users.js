@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 const user = require('../models/user');
 const { ERROR_CODE } = require('../constants/constants');
 
@@ -29,7 +30,7 @@ module.exports.createUser = (req, res) => {
 
   user
     .create({ name, about, avatar })
-    .then((users) => res.status(ERROR_CODE.CREATED).send(users))
+    .then((user) => res.status(ERROR_CODE.CREATED).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(ERROR_CODE.BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя.' });
@@ -43,11 +44,11 @@ module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
   user
     .findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .then((users) => {
+    .then((user) => {
       if (!users) {
         res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Пользователь не найден.' });
       } else {
-        res.status(ERROR_CODE.OK).send({ users });
+        res.status(ERROR_CODE.OK).send({ user });
       }
     })
     .catch((err) => {
@@ -64,11 +65,11 @@ module.exports.updateAvatar = (req, res) => {
 
   user
     .findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .then((users) => {
-      if (!users) {
+    .then((user) => {
+      if (!user) {
         res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Пользователь не найден.' });
       } else {
-        res.status(ERROR_CODE.OK).send({ users });
+        res.status(ERROR_CODE.OK).send({ user });
       }
     })
     .catch((err) => {

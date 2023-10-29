@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 const card = require('../models/card');
 const { ERROR_CODE } = require('../constants/constants');
 
@@ -26,11 +27,11 @@ module.exports.getCards = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   card
     .findByIdAndRemove(req.params.cardId)
-    .then((cards) => {
-      if (!card) {
+    .then((card) => {
+      if (card === null) {
         res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Карточка не найдена.' });
       } else {
-        res.status(ERROR_CODE.OK).send({ cards });
+        res.status(ERROR_CODE.OK).send({ card });
       }
     })
     .catch((err) => {
