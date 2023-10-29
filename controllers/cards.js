@@ -45,11 +45,11 @@ module.exports.deleteCard = (req, res) => {
 module.exports.likeCard = (req, res) => {
   card
     .findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
-    .then((cards) => {
-      if (!card) {
+    .then((card) => {
+      if (card === null) {
         res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Передан несуществующий id карточки.' });
       } else {
-        res.status(ERROR_CODE.OK).send({ cards });
+        res.status(ERROR_CODE.OK).send({ card });
       }
     })
     .catch((err) => {
@@ -64,11 +64,11 @@ module.exports.likeCard = (req, res) => {
 module.exports.dislikeCard = (req, res) => {
   card
     .findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .then((cards) => {
-      if (!card) {
+    .then((card) => {
+      if (card === null) {
         res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Передан несуществующий id карточки.' });
       } else {
-        res.status(ERROR_CODE.OK).send({ cards });
+        res.status(ERROR_CODE.OK).send({ card });
       }
     })
     .catch((err) => {
