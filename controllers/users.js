@@ -45,7 +45,7 @@ module.exports.updateUser = (req, res) => {
   user
     .findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
-      if (!users) {
+      if (!user) {
         res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Пользователь не найден.' });
       } else {
         res.status(ERROR_CODE.OK).send({ user });
