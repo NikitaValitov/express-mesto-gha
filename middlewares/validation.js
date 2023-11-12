@@ -6,7 +6,7 @@ const linkRegex = /^(http|https):\/\/(?:www\.)?[a-zA-Z0-9._~\-:?#[\]@!$&'()*+,/;
 module.exports.validationCreateCard = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().pattern(linkRegex),
+    link: Joi.string().required().regex(linkRegex),
   }),
 });
 
@@ -26,15 +26,15 @@ module.exports.validationCreateUser = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(linkRegex),
-    email: Joi.string().required().email().pattern(emailRegex),
+    avatar: Joi.string().regex(linkRegex),
+    email: Joi.string().required().email().regex(emailRegex),
     password: Joi.string().required(),
   }),
 });
 
 module.exports.validationLogin = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().email().pattern(emailRegex),
+    email: Joi.string().required().email().regex(emailRegex),
     password: Joi.string().required(),
   }),
 });
@@ -48,6 +48,6 @@ module.exports.validationUpdateUser = celebrate({
 
 module.exports.validationUpdateAvatar = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().pattern(linkRegex),
+    avatar: Joi.string().required().regex(linkRegex),
   }),
 });
