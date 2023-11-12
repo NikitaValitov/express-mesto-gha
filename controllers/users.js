@@ -69,7 +69,7 @@ module.exports.createUser = (req, res) => {
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return user.findUserByCredentials(email, password)
@@ -78,9 +78,7 @@ module.exports.login = (req, res) => {
 
       res.send({ token });
     })
-    .catch((err) => {
-      res.status(ERROR_CODE.UNAUTHORIZED).send({ message: err.message });
-    });
+    .catch(next);
 };
 
 module.exports.updateUser = (req, res) => {
