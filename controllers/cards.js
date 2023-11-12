@@ -21,18 +21,20 @@ module.exports.getCards = (req, res) => {
   card
     .find({})
     .then((cards) => res.status(ERROR_CODE.OK).send(cards))
-    .catch(() => res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Карточка не найдена.' }));
+    .catch(() => res.status(ERROR_CODE.SERVER_ERROR).send({ message: 'Ошибка на стороне сервера.' }));
 };
 
 module.exports.deleteCard = (req, res) => {
   card
-    .findByIdAndRemove(req.params.cardId)
+    .findById(req.params.cardId)
     .then((card) => {
       if (card === null) {
         res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Карточка не найдена.' });
-      } else {
-        res.status(ERROR_CODE.OK).send({ card });
-      }
+      } if (req.user._id !== card.owner.toString()) {
+        res.status(ERROR_CODE.FORBIDDEN).send({ message: 'Нельзя удалять карточки других пользователей.' });
+      } card.remove().then(() => {
+        res.status(ERROR_CODE.OK).send({ message: 'Карточка удалена.' });
+      });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
