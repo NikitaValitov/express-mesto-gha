@@ -1,6 +1,6 @@
 /* eslint-disable no-shadow */
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const user = require('../models/user');
 const { ERROR_CODE } = require('../constants/constants');
 
