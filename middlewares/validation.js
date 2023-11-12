@@ -27,16 +27,14 @@ module.exports.validationCreateUser = celebrate({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().regex(linkRegex),
-    email: Joi.string().required().email(),
-    // email: Joi.string().required().email().regex(emailRegex),
+    email: Joi.string().required().email().regex(emailRegex),
     password: Joi.string().required(),
   }),
 });
 
 module.exports.validationLogin = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    // email: Joi.string().required().email().regex(emailRegex),
+    email: Joi.string().required().email().regex(emailRegex),
     password: Joi.string().required(),
   }),
 });
