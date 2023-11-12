@@ -16,5 +16,4 @@ router.use('*', (req, res) => {
     .send({ message: 'Страница не найдена.' });
 });
 
-
 module.exports = router;
