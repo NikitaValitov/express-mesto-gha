@@ -14,9 +14,10 @@ app.use(express.json());
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
-app.use(auth, router);
 app.post('/signin', validationLogin, login);
 app.post('/signup', validationCreateUser, createUser);
+app.use(auth);
+app.use(router);
 
 app.listen(PORT, () => {
   console.log(`Server listen port ${PORT}`);
