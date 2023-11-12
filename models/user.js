@@ -6,24 +6,22 @@ const { default: isURL } = require('validator/lib/isURL');
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    default: 'Жак-Ив Кусто',
-    required: [true, 'Поле является обязательным'],
     minlength: [2, 'минимальная длина 2 символа'],
     maxlength: [30, 'максимальаня длина 30 символов'],
+    default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
-    default: 'Исследователь',
-    required: [true, 'Поле является обязательным'],
     minlength: [2, 'минимальная длина 2 символа'],
     maxlength: [30, 'максимальаня длина 30 символов'],
+    default: 'Исследователь',
   },
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     required: [true, 'Поле является обязательным'],
     validate: {
-      validator: (v) => isURL(v),
+      validator: (v) => validator.isURL(v),
       message: 'Некорректный URL',
     },
   },
@@ -32,7 +30,7 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Поле является обязательным'],
     unique: true,
     validate: {
-      validator: (v) => isEmail(v),
+      validator: (v) => validator.isEmail(v),
       message: 'Некорректный email',
     },
   },
