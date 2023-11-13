@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const user = require('../models/user');
 const { ERROR_CODE } = require('../constants/constants');
+const { NotFoundError } = require('../constants/NotFoundError');
+const { BadRequestError } = require('../constants/BadRequestError');
 
 module.exports.getUsers = (req, res, next) => {
   user
@@ -25,17 +27,35 @@ module.exports.getCurrentUser = (req, res, next) => {
     });
 };
 
+// module.exports.getUserById = (req, res, next) => {
+//   user
+//     .findById(req.user._id)
+//     .orFail(new Error('NotFound'))
+//     .then((users) => res.status(ERROR_CODE.OK).send(users))
+//     .catch((err) => {
+//       if (err.name === 'CastError') {
+//         res.status(ERROR_CODE.BAD_REQUEST).send({ message: 'Передан невалидный ID.' });
+//       } if (err.message === 'NotFound') {
+//         res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Пользователь не найден.' });
+//       } else next(err);
+//     });
+// };
+
 module.exports.getUserById = (req, res, next) => {
   user
-    .findById(req.user._id)
-    .orFail(new Error('NotFound'))
-    .then((users) => res.status(ERROR_CODE.OK).send(users))
+    .findById(req.params.userId)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь не найден');
+      }
+      res.send({ data: user });
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_CODE.BAD_REQUEST).send({ message: 'Передан невалидный ID.' });
-      } if (err.message === 'NotFound') {
-        res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Пользователь не найден.' });
-      } else next(err);
+        next(new BadRequestError('Передан некорретный Id'));
+        return;
+      }
+      next(err);
     });
 };
 
