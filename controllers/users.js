@@ -13,7 +13,7 @@ module.exports.getUsers = (req, res, next) => {
 
 module.exports.getCurrentUser = (req, res, next) => {
   user
-    .findById(req.params.id)
+    .findById(req.user._id)
     .orFail(new Error('NotFound'))
     .then((users) => res.status(ERROR_CODE.OK).send(users))
     .catch((err) => {
@@ -27,7 +27,7 @@ module.exports.getCurrentUser = (req, res, next) => {
 
 module.exports.getUserById = (req, res, next) => {
   user
-    .findById(req.params.id)
+    .findById(req.user._id)
     .orFail(new Error('NotFound'))
     .then((users) => res.status(ERROR_CODE.OK).send(users))
     .catch((err) => {

@@ -10,7 +10,7 @@ module.exports.validationCreateCard = celebrate({
   }),
 });
 
-module.exports.validationCardBuId = celebrate({
+module.exports.validationCardById = celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().required().hex().length(24),
   }),
