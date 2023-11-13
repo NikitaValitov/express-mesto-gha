@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = require('./routes');
+const { errors } = require('celebrate');
 
 const { PORT = 3000 } = process.env;
 
@@ -12,6 +13,7 @@ app.use(express.json());
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 app.use(router);
+app.use(errors());
 
 app.listen(PORT, () => {
   console.log(`Server listen port ${PORT}`);
