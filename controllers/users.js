@@ -4,14 +4,14 @@ const bcrypt = require('bcrypt');
 const user = require('../models/user');
 const { ERROR_CODE } = require('../constants/constants');
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   user
     .find({})
     .then((users) => res.status(ERROR_CODE.OK).send(users))
-    .catch(() => res.status(ERROR_CODE.SERVER_ERROR).send({ message: 'Ошибка на стороне сервера.' }));
+    .catch(next);
 };
 
-module.exports.getCurrentUser = (req, res) => {
+module.exports.getCurrentUser = (req, res, next) => {
   user
     .findById(req.params.id)
     .orFail(new Error('NotFound'))
@@ -21,13 +21,11 @@ module.exports.getCurrentUser = (req, res) => {
         res.status(ERROR_CODE.BAD_REQUEST).send({ message: 'Передан невалидный ID.' });
       } if (err.message === 'NotFound') {
         res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Пользователь не найден.' });
-      } else {
-        res.status(ERROR_CODE.SERVER_ERROR).send({ message: 'Ошибка на стороне сервера.' });
-      }
+      } else next(err);
     });
 };
 
-module.exports.getUserById = (req, res) => {
+module.exports.getUserById = (req, res, next) => {
   user
     .findById(req.params.id)
     .orFail(new Error('NotFound'))
@@ -37,13 +35,11 @@ module.exports.getUserById = (req, res) => {
         res.status(ERROR_CODE.BAD_REQUEST).send({ message: 'Передан невалидный ID.' });
       } if (err.message === 'NotFound') {
         res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Пользователь не найден.' });
-      } else {
-        res.status(ERROR_CODE.SERVER_ERROR).send({ message: 'Ошибка на стороне сервера.' });
-      }
+      } else next(err);
     });
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -63,9 +59,7 @@ module.exports.createUser = (req, res) => {
         res.status(ERROR_CODE.BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя.' });
       } if (err.code === 11000) {
         res.status(ERROR_CODE.CONFLICT).send({ message: 'Такой пользователь уже существует.' });
-      } else {
-        res.status(ERROR_CODE.SERVER_ERROR).send({ message: 'Ошибка на стороне сервера.' });
-      }
+      } else next(err);
     });
 };
 
@@ -81,7 +75,7 @@ module.exports.login = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
   user
     .findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
@@ -95,13 +89,11 @@ module.exports.updateUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(ERROR_CODE.BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
-      } else {
-        res.status(ERROR_CODE.SERVER_ERROR).send({ message: 'Ошибка на стороне сервера.' });
-      }
+      } else next(err);
     });
 };
 
-module.exports.updateAvatar = (req, res) => {
+module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
   user
@@ -116,8 +108,6 @@ module.exports.updateAvatar = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(ERROR_CODE.BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении аватара.' });
-      } else {
-        res.status(ERROR_CODE.SERVER_ERROR).send({ message: 'Ошибка на стороне сервера.' });
-      }
+      } else next(err);
     });
 };
