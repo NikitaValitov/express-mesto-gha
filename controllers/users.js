@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const user = require('../models/user');
 const { ERROR_CODE } = require('../constants/constants');
-const { NotFoundError } = require('../constants/NotFoundError');
+// const { NotFoundError } = require('../constants/NotFoundError');
 const { BadRequestError } = require('../constants/BadRequestError');
 
 module.exports.getUsers = (req, res, next) => {
