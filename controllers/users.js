@@ -13,6 +13,25 @@ module.exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 
+module.exports.getUserById = (req, res, next) => {
+  user
+    .findById(req.params.userId)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь не найден');
+      } else {
+        res.send(user);
+      }
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Передан некорретный Id'));
+        return;
+      }
+      next(err);
+    });
+};
+
 module.exports.getCurrentUser = (req, res, next) => {
   user
     .findById(req.user._id)
@@ -24,38 +43,6 @@ module.exports.getCurrentUser = (req, res, next) => {
       } if (err.message === 'NotFound') {
         res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Пользователь не найден.' });
       } else next(err);
-    });
-};
-
-// module.exports.getUserById = (req, res, next) => {
-//   user
-//     .findById(req.user._id)
-//     .orFail(new Error('NotFound'))
-//     .then((users) => res.status(ERROR_CODE.OK).send(users))
-//     .catch((err) => {
-//       if (err.name === 'CastError') {
-//         res.status(ERROR_CODE.BAD_REQUEST).send({ message: 'Передан невалидный ID.' });
-//       } if (err.message === 'NotFound') {
-//         res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Пользователь не найден.' });
-//       } else next(err);
-//     });
-// };
-
-module.exports.getUserById = (req, res, next) => {
-  user
-    .findById(req.params.userId)
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь не найден');
-      }
-      res.send({ data: user });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Передан некорретный Id'));
-        return;
-      }
-      next(err);
     });
 };
 
