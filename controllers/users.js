@@ -20,29 +20,20 @@ module.exports.getUserById = (req, res, next) => {
     .findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        next(new NotFoundError('Пользователь не найден.'));
-      } else {
-        res.send(user);
-      }
+        // return next(new NotFoundError('Пользователь не найден.'));
+        res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Пользователь не найден.' });
+      } res.send(user);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Передан некорретный Id'));
-        return;
-      }
-      next(err);
-    });
+    .catch(next);
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
   user
     .findById(req.user._id)
-    .orFail(new NotFoundError())
+    .orFail(() => new NotFoundError('Пользователь не найден.'))
     .then((users) => res.status(ERROR_CODE.OK).send(users))
     .catch((err) => {
-      if (err.message === 'NotFound') {
-        next(new NotFoundError('Пользователь не найден.'));
-      } else next(err);
+      next(err);
     });
 };
 
