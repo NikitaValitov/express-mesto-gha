@@ -1,10 +1,12 @@
+/* eslint-disable consistent-return */
 /* eslint-disable no-shadow */
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const user = require('../models/user');
 const { ERROR_CODE } = require('../constants/constants');
-// const { NotFoundError } = require('../constants/NotFoundError');
+const { NotFoundError } = require('../constants/NotFoundError');
 const { BadRequestError } = require('../constants/BadRequestError');
+const ConflictError = require('../constants/ConflictError');
 
 module.exports.getUsers = (req, res, next) => {
   user
@@ -18,7 +20,7 @@ module.exports.getUserById = (req, res, next) => {
     .findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Пользователь не найден.' });
+        next(new NotFoundError('Пользователь не найден.'));
       } else {
         res.send(user);
       }
@@ -35,13 +37,11 @@ module.exports.getUserById = (req, res, next) => {
 module.exports.getCurrentUser = (req, res, next) => {
   user
     .findById(req.user._id)
-    .orFail(new Error('NotFound'))
+    .orFail(new NotFoundError())
     .then((users) => res.status(ERROR_CODE.OK).send(users))
     .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(ERROR_CODE.BAD_REQUEST).send({ message: 'Передан невалидный ID.' });
-      } if (err.message === 'NotFound') {
-        res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Пользователь не найден.' });
+      if (err.message === 'NotFound') {
+        next(new NotFoundError('Пользователь не найден.'));
       } else next(err);
     });
 };
@@ -63,10 +63,10 @@ module.exports.createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE.BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+        return next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
       } if (err.code === 11000) {
-        res.status(ERROR_CODE.CONFLICT).send({ message: 'Такой пользователь уже существует.' });
-      } else next(err);
+        return next(new ConflictError('Такой пользователь уже существует.'));
+      } next(err);
     });
 };
 
@@ -88,15 +88,13 @@ module.exports.updateUser = (req, res, next) => {
     .findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Пользователь не найден.' });
-      } else {
-        res.status(ERROR_CODE.OK).send({ user });
-      }
+        return next(new NotFoundError('Пользователь не найден.'));
+      } res.status(ERROR_CODE.OK).send({ user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE.BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
-      } else next(err);
+        return next(new BadRequestError('Переданы некорректные данные при обновлении профиля.'));
+      } next(err);
     });
 };
 
@@ -107,14 +105,12 @@ module.exports.updateAvatar = (req, res, next) => {
     .findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Пользователь не найден.' });
-      } else {
-        res.status(ERROR_CODE.OK).send({ user });
-      }
+        return next(new NotFoundError('Пользователь не найден.'));
+      } res.status(ERROR_CODE.OK).send({ user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE.BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении аватара.' });
-      } else next(err);
+        return next(new BadRequestError('Переданы некорректные данные при обновлении аватара.'));
+      } next(err);
     });
 };

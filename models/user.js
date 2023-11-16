@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 /* eslint-disable no-undef */
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
