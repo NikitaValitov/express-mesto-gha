@@ -21,6 +21,10 @@ module.exports.getUserById = (req, res, next) => {
     .then((user) => {
       if (!user) {
         return next(new NotFoundError('Пользователь не найден.'));
+        // но так у меня выходит 500 ошибка, а не 404.
+        // не могу понять почему
+
+        // с этой строкой все рабоатет как надо
         // res.status(ERROR_CODE.NOT_FOUND).send({ message: 'Пользователь не найден.' });
       } res.send(user);
     })
