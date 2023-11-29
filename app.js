@@ -2,15 +2,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
+const cors = require('cors');
 const router = require('./routes');
 const { validationLogin, validationCreateUser } = require('./middlewares/validation');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { centralizedErrorHandler } = require('./middlewares/centralizedErrorHandler');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 
 const app = express();
+app.use(cors());
 
 app.use(express.json());
 
